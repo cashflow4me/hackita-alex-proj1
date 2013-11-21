@@ -1,4 +1,6 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 #
 # Copyright 2007 Google Inc.
 #
@@ -63,6 +65,15 @@ def f_99beers(bottles):
         return output + f_99beers(bottles - 1)
 
 
+def gematria(word):
+    gem_letters = {u'א': 1, u'ב': 2, u'ג': 3,u'ד': 4, u'ה': 5, u'ו': 6, u'ז': 7, u'ח': 8, u'ט': 9, u'י': 10, u'כ': 20, u'ל': 30, u'מ': 40, u'נ': 50, u'ס': 60, u'ע': 70, u'פ': 80, u'צ': 90, u'ק': 100, u'ר': 200, u'ש': 300, u'ת': 400, u'ך': 500, u'ם': 600, u'ן': 700, u'ף': 800, u'ץ': 900 }
+    output = 0
+    uu = word.decode('utf8')
+    for letter in uu:
+        if letter in gem_letters:
+            output += gem_letters[letter]
+    return output
+
 @route('/')
 def index():
     return '''
@@ -73,6 +84,7 @@ def index():
         <a href="/bottles-loop/3">bottles by loop (3)</a><br>
         <a href="/bottles-recursion/">bottles by recursion form</a><br>
         <a href="/bottles-recursion/2">bottles by recursion (2)</a><br>
+        <a href="/gematria">gematria</a><br>
         '''
 
 
@@ -143,5 +155,19 @@ def bottlesrecursion_get(n):
 @post('/bottles-recursion')
 def bottlesrecursion_post():
     return bottlesrecursion(int(request.forms.get('n'))) + "<BR>" + bottlesrecursion_form()
+
+@route('/gematria')
+@route('/gematria/')
+def gematria_form():
+    return '''
+        <form action="/gematria" method="post">
+            word in HE: <input name="word" type="text" />
+            <input value="send" type="submit" />
+        </form>
+    '''
+@post('/gematria')
+def gematria_post():
+    return str(gematria(str(request.forms.get('word')))) + "<BR>" + gematria_form()
+
 
 app = default_app()
