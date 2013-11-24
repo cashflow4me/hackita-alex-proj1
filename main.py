@@ -72,7 +72,24 @@ def gematria(word):
     for letter in uu:
         if letter in gem_letters:
             output += gem_letters[letter]
-    return output
+    return word+ "=" + str(output)
+
+
+def palindrom(word):
+    # make encoding for hebrew
+    uu = word.decode('utf8')
+    #remove space
+    uu = uu.replace(" ", "").replace(u"ף", u"פ").replace(u"ך",u"כ").replace(u"ם",u"מ").replace(u"ן",u"נ").replace(u"ץ",u"צ")
+
+    # loop through and build reverse string
+    #ru = ""
+    #for symbol in reversed(uu):
+    #    ru += symbol
+    # build reverse string without loop, uses splicing
+    ru = uu[::-1]
+    if uu == ru:
+        return "palindrom"
+    return "not palindrom"
 
 @route('/')
 def index():
@@ -85,6 +102,7 @@ def index():
         <a href="/bottles-recursion/">bottles by recursion form</a><br>
         <a href="/bottles-recursion/2">bottles by recursion (2)</a><br>
         <a href="/gematria">gematria</a><br>
+        <a href="/palindrom">palindrom</a><br>
         '''
 
 
@@ -169,5 +187,19 @@ def gematria_form():
 def gematria_post():
     return str(gematria(str(request.forms.get('word')))) + "<BR>" + gematria_form()
 
+
+@route('/palindrom')
+@route('/palindrom/')
+def palindrom_form():
+    return '''
+        <BR> try this: פרשנו רעבתן שבדבש נתבער ונשרף
+        <form action="/palindrom" method="post">
+            word in EN/HE: <input name="word" type="text" />
+            <input value="send" type="submit" />
+        </form>
+    '''
+@post('/palindrom')
+def palindrom_post():
+    return "<b>" + str(request.forms.get('word')) + "</b> is " + str(palindrom(str(request.forms.get('word')))) + "<BR>" + palindrom_form()
 
 app = default_app()
